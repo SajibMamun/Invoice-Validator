@@ -1,11 +1,19 @@
+from pdf2image import convert_from_path
 import pytesseract
 import cv2
 import numpy as np
 from PIL import Image, ImageChops, ImageEnhance
 import os
 
-#Optional: Set this if tesseract isn't in PATH
+# Configure tesseract path (if needed)
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+POPPLER_PATH = r'C:\poppler-24.08.0\Library\bin'  # Update this to your actual Poppler path
+
+def convert_pdf_to_image(pdf_path):
+    images = convert_from_path(pdf_path, dpi=300, poppler_path=POPPLER_PATH)
+    image_path = pdf_path.replace(".pdf", "_page1.jpg")
+    images[0].save(image_path, 'JPEG')
+    return image_path
 
 def check_ocr_fields(image_path):
     image = cv2.imread(image_path)
@@ -14,13 +22,11 @@ def check_ocr_fields(image_path):
 
     text = pytesseract.image_to_string(thresh)
 
-    # Check for essential fields
     essential_fields = ['invoice', 'date', 'total', 'tax']
     missing = [field for field in essential_fields if field not in text.lower()]
     passed = len(missing) < 2
 
     return passed, text, missing
-
 
 def check_suspicious_keywords(text):
     suspicious_keywords = ['edited', 'fake', 'photoshop', 'clone', 'altered']
@@ -28,12 +34,10 @@ def check_suspicious_keywords(text):
     passed = len(found) == 0
     return passed, found
 
-
 def check_ela(image_path, quality=90):
-    ela_output = image_path.replace(".jpg", "_ela.jpg").replace(".png", "_ela.jpg")
-
+    ela_output = image_path.replace(".jpg", "_ela.jpg")
     original = Image.open(image_path).convert('RGB')
-    temp_jpg = image_path.replace(".jpg", "_temp.jpg").replace(".png", "_temp.jpg")
+    temp_jpg = image_path.replace(".jpg", "_temp.jpg")
     original.save(temp_jpg, 'JPEG', quality=quality)
 
     resaved = Image.open(temp_jpg)
@@ -48,13 +52,18 @@ def check_ela(image_path, quality=90):
     ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
     ela_image.save(ela_output)
 
-    suspicious = max_diff > 20  # Adjust this based on testing
+    suspicious = max_diff > 20
     passed = not suspicious
 
     return passed, ela_output
 
+def full_invoice_check(file_path):
+    is_pdf = file_path.lower().endswith('.pdf')
+    if is_pdf:
+        image_path = convert_pdf_to_image(file_path)
+    else:
+        image_path = file_path
 
-def full_invoice_check(image_path):
     # Step 1: OCR Field Check
     ocr_passed, text, missing = check_ocr_fields(image_path)
     if not ocr_passed:
