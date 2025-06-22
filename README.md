@@ -41,6 +41,10 @@ opencv-python<br/>
 numpy<br/>
 pdf2image<br/>
 
+<br/><br/><br/><br/>
+
+![image](https://github.com/user-attachments/assets/13f2e70f-aeff-4e31-a4b6-4becf826248c)
+
 
 
 
