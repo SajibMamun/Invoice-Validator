@@ -1,14 +1,14 @@
 ✅ Step 1: Download and Install Tesseract OCR <br/><br/>
-Go to the official installer page:<br/>
-🔗 https://github.com/tesseract-ocr/tesseract<br/><br/>
+Go to the official installer page: <br/>
+🔗 https://github.com/tesseract-ocr/tesseract <br/><br/>
 
 Scroll down to the Windows Installer section and download from this direct link (from a trusted source):<br/>
-🔗 https://github.com/UB-Mannheim/tesseract/wiki<br/>
+🔗 https://github.com/UB-Mannheim/tesseract/wiki <br/>
 
 Download the latest .exe file (e.g., tesseract-ocr-w64-setup-v5.3.3.20231005.exe)<br/><br/>
 
 Install it to a known path (default is):<br/>
-C:\Program Files\Tesseract-OCR\<br/><br/>
+C:\Program Files\Tesseract-OCR\ <br/><br/>
 
 
 
